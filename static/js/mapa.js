@@ -80,12 +80,10 @@ function onLocationError(e) {
 
 //aca hacemos la llamada a Ajax utilizando la para hacer la busqueda en vivo nominatim que es una biblioteca de busqueda de OpenStreetMaps
 
->>>>>>> Desarollo
 function direccion_buscador() {
     var entrada = document.getElementById("direccion");
 
     $.getJSON('http://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + entrada.value, function(data) {
-<<<<<<< HEAD
         var items = [];
 
         $.each(data, function(key, val) {
@@ -99,21 +97,6 @@ function direccion_buscador() {
             $('<ul/>', {
                 'class': 'my-new-list',
                 html: items.join('')
-=======
-        var direcciones = [];
-
-        $.each(data, function(key, val) {
-            busqueda = val.boundingbox;
-            direcciones.push("<li><a href='#' onclick='elegirDireccion(" + busqueda[0] + ", " + busqueda[2] + ", " + busqueda[1] + ", " + busqueda[3] + ", \"" + val.tipo_osm + "\");return false;'>" + val.display_name + '</a></li>');
-        });
-
-        $('#resultado').empty();
-        if (direcciones.length != 0) {
-            $('<p>', { html: "Resultados de la b&uacute;queda:" }).appendTo('#resultado');
-            $('<ul/>', {
-                'class': 'my-new-list',
-                html: direcciones.join('')
->>>>>>> Desarollo
             }).appendTo('#resultado');
         }else{
              $('<p>', { html: "Ningun resultado encontrado." }).appendTo('#resultado');
@@ -121,10 +104,3 @@ function direccion_buscador() {
     });
 }
 window.onload = cargar_mapa;
-<<<<<<< HEAD
-=======
-
-
-/*map.on('locationfound', onLocationFound);
-map.on('locationerror', onLocationError);*/
->>>>>>> Desarollo
