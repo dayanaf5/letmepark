@@ -18,13 +18,124 @@
         <div id="buscador" name="buscador">
             <img class="logo" src="{% static 'img/logo2.png' %}"  type="submit" onclick="javascript:window.location.reload();">
             <input type="search" name="direccion" id="direccion" size="10" placeholder="Escriba dirección..."/>
-            <i type="submit" onclick="direccion_buscador();" class="fas fa-search fa-lg" style="color:#a71d21;"></i>
-            <div id="resultado"></div>
-  
-  
-        <script src="{% static '/leaflet/leaflet.js' %}"></script>
+        
         <script src="{% static '/js/jquery-1.8.2.min.js' %}"></script>
+        {% comment %}
         <script src="{% static 'js/script.js' %}"></script>
+        {% endcomment %}
+
+        <script>
+        // Initialize and add the map
+        function initMap() {
+          // The location of Uluru
+          var madrid = {lat: 40.4381311, lng: -3.8196228};
+          // The map, centered at Uluru
+          var map = new google.maps.Map(
+              document.getElementById('mapa'), {zoom: 10, center: madrid});
+          // The marker, positioned at Uluru
+          //var marker = new google.maps.Marker({position: madrid, map: map});
+
+
+          var input = document.getElementById('direccion');
+          var autocomplete = new google.maps.places.Autocomplete(input);
+
+          autocomplete.addListener('place_changed', function () {
+
+          var place = autocomplete.getPlace();
+ 
+          if (!place.geometry) {
+              window.alert("Autocomplete's returned place contains no geometry");
+              return;
+          }
+          
+          var lat = place.geometry.location.lat(),
+          lng = place.geometry.location.lng();
+
+          map.setCenter(new google.maps.LatLng(lat, lng));
+
+          //Accuracy in metres
+          var accuracy = 500; 
+
+          /* Create a circle but don't set the 'map' variable as we don't need to see circle on the map */
+          var circle = new google.maps.Circle({
+                             center: map.getCenter(),
+                             radius: accuracy
+                         });
+
+          //Get the new bounds from the circle
+          var bounds = circle.getBounds();
+
+          /* Fit the map to the size of the circle. Will be slightly bigger than the circle as the API adds a little padding */
+          map.fitBounds(bounds);
+
+          var southWest = bounds.getSouthWest();
+          var northEast = bounds.getNorthEast();
+          
+          var minLat = southWest.lat();
+          var minLon = southWest.lng();
+          
+          var maxLat = northEast.lat();
+          var maxLon = northEast.lng();
+          
+          var icon = {
+            url: "/static/img/car.png", // url
+            scaledSize: new google.maps.Size(25, 25), // scaled size
+            origin: new google.maps.Point(0,0), // origin
+            anchor: new google.maps.Point(0, 0) // anchor
+          };
+
+
+          $.ajax({
+                data: { 'lat1': minLat, 'lon1': minLon, 'lat2': maxLat, 'lon2': maxLon,},
+                url: '/BusquedaAjax/',
+                type: 'get',
+                success: function(data) {
+                    console.log("consulta hecha")
+                    console.log(data)
+
+                    var infowindow = new google.maps.InfoWindow;
+
+                    var marker, i;
+
+                    for(var i = 0; i < data.length; i++){
+
+                        marker = new google.maps.Marker({
+                          position: {lat: data[i].fields.lat, lng: data[i].fields.lon},
+                          title: "Nombre:" +" "+ data[i].fields.name +"<br>"+ "Dirección:" +" "+ data[i].fields.address,
+                          map: map,
+                          icon: icon
+                        });
+
+                        google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                             return function() {
+                                 infowindow.setContent("Nombre:" +" "+ data[i].fields.name +"<br>"+ "Dirección:" +" "+ data[i].fields.address);
+                                 infowindow.open(map, marker);
+                             }
+                        })(marker, i));
+
+
+                    }
+                }
+                
+            });
+
+            
+        });
+
+
+
+        }
+
+
+        </script>
+        
+        <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHWF4S03V4kODAXed5C81Ka5j25u5Wu-4&callback=initMap&libraries=places">
+        </script>
+
+
+
+
         </div>
     </div>
     
