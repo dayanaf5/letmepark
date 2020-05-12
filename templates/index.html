@@ -84,6 +84,13 @@
             anchor: new google.maps.Point(0, 0) // anchor
           };
 
+          var icon2 = {
+            url: "/static/img/icon.jpeg", // url
+            scaledSize: new google.maps.Size(25, 25), // scaled size
+            origin: new google.maps.Point(0,0), // origin
+            anchor: new google.maps.Point(0, 0) // anchor
+          };
+
 
           $.ajax({
                 data: { 'lat1': minLat, 'lon1': minLon, 'lat2': maxLat, 'lon2': maxLon,},
@@ -108,6 +115,40 @@
                         google.maps.event.addListener(marker, 'click', (function(marker, i) {
                              return function() {
                                  infowindow.setContent("Nombre:" +" "+ data[i].fields.name +"<br>"+ "Dirección:" +" "+ data[i].fields.address);
+                                 infowindow.open(map, marker);
+                             }
+                        })(marker, i));
+
+
+                    }
+                }
+                
+            });
+
+
+            $.ajax({
+                data: { 'lat1': minLat, 'lon1': minLon, 'lat2': maxLat, 'lon2': maxLon,},
+                url: '/BookingsliteSearchAjax/',
+                type: 'get',
+                success: function(data) {
+                    console.log("consulta hecha con BookingsliteSearchAjax")
+                    
+                    var infowindow = new google.maps.InfoWindow;
+
+                    var marker, i;
+
+                    for(var i = 0; i < data.length; i++){
+
+                        marker = new google.maps.Marker({
+                          position: {lat: data[i].fields.lat, lng: data[i].fields.lon},
+                          title: "Nombre:" +" "+ data[i].fields.selected_name +"<br>"+ "Dirección:" +" "+ data[i].fields.position,
+                          map: map,
+                          icon: icon2
+                        });
+
+                        google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                             return function() {
+                                 infowindow.setContent("Nombre:" +" "+ data[i].fields.selected_name +"<br>"+ "Dirección:" +" "+ data[i].fields.position);
                                  infowindow.open(map, marker);
                              }
                         })(marker, i));

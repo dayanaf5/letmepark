@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.views.generic import TemplateView
-from .models import Parkings
+from .models import Parkings, Bookingslite
 from django.core import serializers
 
 # Create your views here.
@@ -23,4 +23,24 @@ class BusquedaAjax(TemplateView):
         parking = Parkings.objects.filter(**kwargs)   
 
         data = serializers.serialize('json',parking,fields=('name','provider','lmpPID','address','lon','lat'))
-        return HttpResponse(data, content_type='application/json')      
+        return HttpResponse(data, content_type='application/json')
+
+
+class BookingsliteSearchAjax(TemplateView):
+    model = Bookingslite
+
+    def get(self, request, *args, **kwargs):
+        
+        lon1 = request.GET['lon1']
+        lon2 = request.GET['lon2']  
+        lat1 = request.GET['lat1']  
+        lat2 = request.GET['lat2']   
+
+        kwargs = {'lon__gte': lon1,'lon__lte': lon2,'lat__gte': lat1,'lat__lte': lat2} 
+        bookingslite = Bookingslite.objects.filter(**kwargs)[10]
+        
+        
+        data = serializers.serialize('json',bookingslite,fields=('timestamp', 'when', 'short_code', 'lat', 'lon', 'position', 'parking_found', 'selected_name', 'selected_lmpPID', 'trello_url',))
+        return HttpResponse(data, content_type='application/json')
+
+

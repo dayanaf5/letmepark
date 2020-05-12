@@ -16,12 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from buscador import views
-from buscador.views import Inicio, BusquedaAjax
+from buscador.views import Inicio, BusquedaAjax, BookingsliteSearchAjax
 from django.conf.urls import include, url
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',Inicio.as_view(), name='index'),
     path('BusquedaAjax/',BusquedaAjax.as_view(), name='BusquedaAjax'),
+    path('BookingsliteSearchAjax/',BookingsliteSearchAjax.as_view(), name='BookingsliteSearchAjax'),
 
 ]
