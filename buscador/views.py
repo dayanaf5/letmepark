@@ -37,7 +37,7 @@ class BookingsliteSearchAjax(TemplateView):
         lat2 = request.GET['lat2']   
 
         kwargs = {'lon__gte': lon1,'lon__lte': lon2,'lat__gte': lat1,'lat__lte': lat2} 
-        bookingslite = Bookingslite.objects.filter(**kwargs)[10]
+        bookingslite = Bookingslite.objects.filter(**kwargs)
         
         
         data = serializers.serialize('json',bookingslite,fields=('timestamp', 'when', 'short_code', 'lat', 'lon', 'position', 'parking_found', 'selected_name', 'selected_lmpPID', 'trello_url',))
